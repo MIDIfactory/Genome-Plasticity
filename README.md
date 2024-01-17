@@ -9,7 +9,7 @@ ADD FORMULA
 ### Requirements
 * Linux or macOS
 * [Python](https://www.python.org/) 3.1 or later
-* Python libraries: pandas, scipy, mmultiprocessing, seaborn, matplotlib
+* Python libraries: pandas, scipy, multiprocessing, seaborn, matplotlib
 
 
 ### Usage
