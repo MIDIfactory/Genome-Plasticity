@@ -3,7 +3,7 @@
 Scripts used for computing Flux of Genes Segments (FOGS), which enable to quantify the rate of gene acquisition or loss events within a collection of bacterial genomes.
 
 ```
-
+ADD FORMULA
 ```
 
 ### Requirements
