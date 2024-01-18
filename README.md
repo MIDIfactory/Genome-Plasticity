@@ -3,7 +3,8 @@
 Scripts used for computing Flux of Genes Segments (FOGS), which enable to quantify the rate of gene acquisition or loss events within a collection of bacterial genomes.
 
 
-![FOGS formula](https://github.dev/MIDIfactory/Genome-Plasticity/blob/main/Formula.png)
+![FOGS formula](Formula.png)
+d is the evolutionary distance between genome A and genome B, Np is the total number of genome pairs considered (Np = 2/[N(N-1)], where N is the number of genomes considered). The higher the value of FOGS, the higher is the genome plasticity. 
 
 ### Requirements
 * Linux or macOS
