@@ -2,9 +2,8 @@
 
 Scripts used for computing Flux of Genes Segments (FOGS), which enable to quantify the rate of gene acquisition or loss events within a collection of bacterial genomes.
 
-```
-ADD FORMULA
-```
+
+![FOGS formula](https://github.dev/MIDIfactory/Genome-Plasticity/blob/main/Formula.png)
 
 ### Requirements
 * Linux or macOS
