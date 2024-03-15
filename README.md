@@ -25,7 +25,7 @@ orthologygroup2: GFFID_2	GFFID_1989	GFFID_2131	GFFID_1213	GFFID_5090
 genomeA  genomeB  12
 genomeA  genomeC  23
 ```
-If you are considering closely related strains (e.g. same ST), we suggest to use SNP distances. In the original work, [P-DOR](https://github.com/SteMIDIfactory/P-DOR) was used to obtain the SNP alignment, and [snp-dist](https://github.com/SteMIDIfactory/P-DOR) (-t) to obtain the tsv file.
+If you are considering closely related strains (e.g. same ST), we suggest to use SNP distances. In the original work, [P-DOR](https://github.com/SteMIDIfactory/P-DOR) was used to obtain the SNP alignment, and [snp-dist](https://github.com/SteMIDIfactory/P-DOR) (-m) to obtain the tsv file.
 
 - A tsv table containing the sub-partitioning for the dataset [clusters.tsv]:
  ```
