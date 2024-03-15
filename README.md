@@ -29,6 +29,7 @@ If you are considering closely related strains (e.g. same ST), we suggest to use
 
 - A tsv table containing the sub-partitioning for the dataset [clusters.tsv]:
  ```
+genome Clone
 genomeA  cluster1
 genomeB  cluster2
  ```
