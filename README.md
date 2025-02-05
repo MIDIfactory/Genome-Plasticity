@@ -22,6 +22,14 @@ Plasticitator requires **conda**, [Python 3](https://www.python.org/) and the fo
 ```
 git clone https://github.com/yourusername/Plasticitator.git
 cd Plasticitator
+conda create -y -c bioconda -c conda-forge -c defaults --name Plasticitator python=3.10 mamba
+conda activate Plasticitator
+mamba install -c bioconda mummer4 prodigal
+mamba install parallel
+mamba install pandas
+mamba install scipy
+mamba install biopython
+mamba install -c bioconda -c conda-forge snp-dists
 ```
 
 ## Usage
