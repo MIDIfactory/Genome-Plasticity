@@ -3,49 +3,91 @@
 Scripts used for computing Flux of Genes Segments (FOGS), which enable to quantify the rate of gene acquisition or loss events within a collection of bacterial genomes.
 
 
-![FOGS formula](Formula.png)
-d is the evolutionary distance between genome A and genome B, Np is the total number of genome pairs considered (Np = 2/[N(N-1)], where N is the number of genomes considered). The higher the value of FOGS, the higher is the genome plasticity. 
+![Schermata del 2025-02-05 09-57-01](https://github.com/user-attachments/assets/64b14d15-0b41-4f1a-9fb3-f262ba98e926)
+where 𝛸 is the number of gene gain/loss events, d is the SNP distance between genome A and genome B, N is the number of genomes considered). The higher the value of FOGS, the higher is the genome plasticity. 
 
-### Requirements
-* Linux or macOS
-* [Python](https://www.python.org/) 3.1 or later
-* Python libraries: pandas, scipy, multiprocessing, seaborn, matplotlib
+## Installation
 
+### Requirments
+Plasticitator requires **conda**, [Python 3](https://www.python.org/) and the following dependencies:
+* argparse
+* pandas
+* multiprocessing
+* scipy
+* BioPython
+* glob, shutil, re, json, pickle
+* prodigal (for gene annotation, ensure it is installed and available in PATH)
 
-### Usage
-1. Inputs required for computing the number of gene gain and loss events are:
-- A GFF file for each genome, both prodigal and prokka output are accepted
-- Orthology groups, formatted as follow [orthology_groups_file]:
+### Setup
 ```
-orthologygroup1: GFFID_1	GFFID_112	GFFID_2	GFFID_90	GFFID_1872		
-orthologygroup2: GFFID_2	GFFID_1989	GFFID_2131	GFFID_1213	GFFID_5090	
+git clone https://github.com/yourusername/Plasticitator.git
+cd Plasticitator
 ```
-- A tsv table containing the evolutionary distance for each genomes combination [evolutionary_distaces.tsv]:
+
+## Usage
+### Command-line Arguments
+
 ```
-genomeA  genomeB  12
-genomeA  genomeC  23
+python Plasticitator.py -gf GROUP_FILE -snpr REFERENCE_GENOME -t NUM_THREADS
 ```
-If you are considering closely related strains (e.g. same ST), we suggest to use SNP distances. In the original work, [P-DOR](https://github.com/SteMIDIfactory/P-DOR) was used to obtain the SNP alignment, and [snp-dist](https://github.com/SteMIDIfactory/P-DOR) (-m) to obtain the tsv file.
 
-- A tsv table containing the sub-partitioning for the dataset [clusters.tsv]:
- ```
-genome Clone
-genomeA  cluster1
-genomeB  cluster2
- ```
-    
+Required Arguments:
 
-2. Compute the number of gene gain and loss events for each combination of genomes. 
-All the inputs (gff files and orthology groups file) and the script should be in the same folder
-```bash
-python3 gainlossevents.py orthology_groups_file
+```-gf```: Path to the group file, formatted as: genome_name \t genome_path \t group_names.
+
+```-snpr```: Path to the reference genome for SNP calling.
+
+```-t```: Number of threads for parallel execution.
+
+
+### Example
+
 ```
-A csv files (GainLossEvents.csv) containing the number of gene gain/loss events of each genome is produced.
+python Plasticitator.py -gf genomes.tsv -snpr ref_genome.fna -t 8
+```
+Input Files:
 
-3. The number of gene gain or loss events is then weighted on the SNP distance and FOGS value is produced for each cluster
- ```
-python3 compute_FOGS.py clusters.tsv evolutionary_distaces.tsv
- ```
+Group File (-gf): A tab-separated file listing genomes with their paths and associated groups.
 
-FOGS.tsv contains the FOGS value for each cluster in the dataset
+Reference Genome (-snpr): A FASTA file to be used for core SNP identification.
+
+
+### Output
+
+Results are saved in a directory named groupname_RUN_Plasticity, containing:
+
+```cluster_assign.pkl```: A pickle file storing clustering assignments.
+
+```coreSNPs.fna```: A FASTA file containing core SNP sequences identified across genomes, obtained using [P-DOR](https://github.com/gtonkinhill/fastbaps).
+
+```FOGStable.tsv```: A tab-separated file containing the number of gene gain/loss events, core SNP distance, cluster, and gene gain/loss events weighted by SNP distance for each genome pair
+
+```FOGS.txt```: A text file containing the FOGS value for each identified cluster.
+
+```GS_distances.pkl```: A pickle file containing FOGS calculations for each genome pair.
+
+```neighbor_matrices.pkl```: A pickle file with gene neighborhood matrices for adjacency analysis.
+
+```SNP_distances.pkl```: A pickle file containing SNP-based genetic distance calculations.
+
+```snps/```: A directory storing raw SNP information for further downstream analysis.
+
+```genomes/```: Copies of input genomes.
+
+```panta/```: A directory contaning [panta](https://github.com/amromics/panta) results.
+
+
+### Warning
+
+Plasticitator creates and stores temporary files during execution in the ```/dev/shm`` directory. If the execution is interrupted, temporary files may remain in ```/dev/shm```, consuming memory. It is advisable to clean up any leftover files manually to free up system resources using the following command: 
+```
+rm -rf /dev/shm/tmp_plasticity
+```
+
+
+
+
+```
+rm -rf /dev/shm/tmp_plasticity
+```
 
