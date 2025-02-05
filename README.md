@@ -84,10 +84,3 @@ Plasticitator creates and stores temporary files during execution in the ```/dev
 rm -rf /dev/shm/tmp_plasticity
 ```
 
-
-
-
-```
-rm -rf /dev/shm/tmp_plasticity
-```
-
