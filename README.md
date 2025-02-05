@@ -20,6 +20,8 @@ Plasticitator requires **conda**, [Python 3](https://www.python.org/) and the fo
 * mummer4
   
 ### Setup
+- This will be the main enviorment in which the script will be executed. Remember to activate it before executing the script.
+
 ```
 git clone https://github.com/yourusername/Plasticitator.git
 cd Plasticitator
@@ -32,11 +34,23 @@ mamba install scipy
 mamba install biopython
 mamba install -c bioconda -c conda-forge snp-dists
 ```
+- This enviorment is needed to use panta. This enviorment will be called internally.
+```
+conda create -y -c conda-forge -c defaults --name panta python=3.10 mamba
+conda activate panta
+git clone https://github.com/amromics/panta
+cd panta
+mamba install -y -c conda-forge -c bioconda -c anaconda -c defaults  --file requirements.txt
+pip install .
+conda deactivate
+```
+
 
 ## Usage
 ### Command-line Arguments
 
 ```
+conda activate Plasticitator
 python Plasticitator.py -gf GROUP_FILE -snpr REFERENCE_GENOME -t NUM_THREADS
 ```
 
