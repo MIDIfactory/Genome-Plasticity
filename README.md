@@ -16,8 +16,9 @@ Plasticitator requires **conda**, [Python 3](https://www.python.org/) and the fo
 * scipy
 * BioPython
 * glob, shutil, re, json, pickle
-* prodigal (for gene annotation, ensure it is installed and available in PATH)
-
+* prodigal
+* mummer4
+  
 ### Setup
 ```
 git clone https://github.com/yourusername/Plasticitator.git
