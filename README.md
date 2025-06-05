@@ -5,6 +5,7 @@ Scripts used for computing Flux of Genes Segments (FOGS), which enable to quanti
 
 ![Schermata del 2025-02-05 09-57-01](https://github.com/user-attachments/assets/64b14d15-0b41-4f1a-9fb3-f262ba98e926)
 where 𝛸 is the number of gene gain/loss events, d is the SNP distance between genome A and genome B, N is the number of genomes considered). The higher the value of FOGS, the higher is the genome plasticity. 
+In the original work, we chose to use core SNPs as our focus was on investigating intra-species diversity. However, we recommend adapting the denominator based on the specific goals of the analysis and the nature of the available data. For instance, if the aim is to compare two different species, an alternative approach—such as using orthology-based metrics—would be more appropriate.
 
 ## Installation
 
@@ -18,6 +19,7 @@ Plasticitator requires **conda**, [Python 3](https://www.python.org/) and the fo
 * glob, shutil, re, json, pickle
 * prodigal
 * mummer4
+* gubbins
   
 ### Setup
 - This will be the main enviorment in which the script will be executed. Remember to activate it before executing the script.
@@ -41,6 +43,7 @@ conda activate panta
 git clone https://github.com/amromics/panta
 cd panta
 mamba install -y -c conda-forge -c bioconda -c anaconda -c defaults  --file requirements.txt
+conda install -c gubbins
 pip install .
 conda deactivate
 ```
@@ -106,4 +109,8 @@ Plasticitator creates and stores temporary files during execution in the ```/dev
 ```
 rm -rf /dev/shm/tmp_plasticity
 ```
+
+
+
+
 
