@@ -5,7 +5,9 @@ from multiprocessing import Pool
 from scipy.sparse import csr_matrix
 from scipy.sparse.csgraph import connected_components
 from itertools import combinations
-from Bio import SeqIO
+from Bio.Seq import Seq
+from Bio.SeqRecord import SeqRecord
+
 
 
 ## FUNCTIONS
@@ -185,6 +187,42 @@ def core_snps(list_genomes, window,reference_fasta):
         p2.close()
     outfasta.close()
 
+def create_complete_alignment(snp_positions, snp_sequences, reference_genome, output_dir):
+    """Create complete alignment from SNP data"""
+    os.makedirs(output_dir, exist_ok=True)
+    
+    # Read reference genome
+    reference = next(SeqIO.parse(reference_genome, "fasta"))
+    ref_seq = str(reference.seq)
+    
+    # Process each sample
+    concat_records = []
+    for sample_id, snp_seq in snp_sequences.items():
+        # Initialize with reference sequence
+        full_sequence = list(ref_seq)
+        
+        # Replace SNPs
+        for pos, snp in zip(snp_positions, snp_seq):
+            if snp != '-':
+                full_sequence[pos-1] = snp
+        
+        # Create record
+        full_seq_record = SeqRecord(
+            Seq(''.join(full_sequence)),
+            id=sample_id,
+            description=""
+        )
+        
+        # Save individual sequence
+        SeqIO.write(full_seq_record, 
+                   os.path.join(output_dir, f"{sample_id}_complete.fasta"), 
+                   "fasta")
+        concat_records.append(full_seq_record)
+    
+    # Save concatenated alignment
+    SeqIO.write(concat_records, 
+                os.path.join(output_dir, "concatenated_alignment.fasta"),
+                "fasta")
 
 
 ## STATICS
@@ -318,8 +356,34 @@ for snp_file in input_files:
 os.system("cp -r snps %s/%s/snps" %(THIS_DIR,Results_folder_name))
 core_snps(samplelist,10,REF)
 os.system("cp -r coreSNPs.fna %s/%s/coreSNPs.fna" %(THIS_DIR,Results_folder_name))
-SNP_distances=os.popen("snp-dists -m coreSNPs.fna").read().strip("\n").split("\n")
-SNP_distances={"%s||%s" %(r.split("\t")[0],r.split("\t")[1]) : int(r.split("\t")[2]) for r in SNP_distances}
+
+# Create full alignment
+full_align_dir = os.path.join(THIS_DIR, Results_folder_name, "full_alignment")
+
+# Get SNP positions from first sample's .snp file
+snp_positions = []
+with open(os.path.join("snps", f"{samplelist[0]}.snp")) as f:
+    for line in f:
+        if not re.search(r'\.', line):
+            pos = int(line.split('\t')[0])
+            snp_positions.append(pos)
+
+# Read SNP sequences
+snp_sequences = {}
+for record in SeqIO.parse("coreSNPs.fna", "fasta"):
+    snp_sequences[record.id] = str(record.seq)
+
+# Create full alignment
+create_complete_alignment(snp_positions, snp_sequences, REF, full_align_dir)
+
+# Run Gubbins on the full alignment
+os.system(f"run_gubbins.py {os.path.join(full_align_dir, 'concatenated_alignment.fasta')} --threads {args.threads}")
+
+# Calculate SNP distances using filtered alignment
+filtered_alignment = "concatenated_alignment.filtered_polymorphic_sites.fasta"
+SNP_distances = os.popen(f"snp-dists -m {filtered_alignment}").read().strip("\n").split("\n")
+SNP_distances = {"%s||%s" %(r.split("\t")[0],r.split("\t")[1]) : int(r.split("\t")[2]) 
+                for r in SNP_distances}
 
 with open('%s/%s/SNP_distances.pkl' %(THIS_DIR,Results_folder_name), 'wb') as f:
     pickle.dump(SNP_distances, f)
@@ -366,3 +430,4 @@ FinalDF.to_csv("%s/%s/FOGStable.tsv" %(THIS_DIR,Results_folder_name), sep="\t")
 
 os.chdir(THIS_DIR)
 os.system("rm -rf %s/tmp_plasticity" %RAM_tmp)
+
